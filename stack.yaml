@@ -1,0 +1,27 @@
+resolver: lts-11.14
+
+nix:
+  enable: true
+  packages:
+  - fltk
+  - libjpeg
+  # - mesa
+
+  - autoconf 
+
+  - haskellPackages.happy 
+  - haskellPackages.alex 
+  - haskellPackages.c2hs
+  - haskellPackages.language-c
+
+packages:
+- ./.
+
+flags: 
+  fltkhs: 
+    bundled: false
+
+extra-deps:
+- fltkhs-0.5.4.5
+
+# - text-1.2.2.0

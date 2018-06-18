@@ -1,0 +1,7 @@
+flags: {}
+packages:
+- '.'
+extra-deps:
+- fltkhs-0.5.1.0
+- text-1.2.2.0
+resolver: lts-2.22
