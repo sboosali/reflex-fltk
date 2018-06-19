@@ -23,6 +23,7 @@ Flag FastCompile
    Manual: True
    Default: True
 
+
 Executable fltkhs-browser
   Main-Is: browser.hs
   Hs-Source-Dirs: sources
@@ -46,3 +47,33 @@ Executable fltkhs-browser
   if !os(darwin) && !os(windows)
     ghc-Options: -pgml g++ "-optl-Wl,--allow-multiple-definition" "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
 
+
+
+
+Executable fltkhs-reflex-host
+  Main-Is: reflex-host.hs
+  Hs-Source-Dirs: ignore/
+  Build-Depends: base == 4.*,
+                 fltkhs >= 0.5.3.4,
+                 text >= 1.2.2.0,
+                 reflex >= 0.4.0,
+                 mtl >= 2.2.1,
+                 transformers >= 0.4.2,
+                 dependent-sum >= 0.3.2,
+                 ref-tf >= 0.4
+
+  default-language: Haskell2010
+  ghc-Options: -Wall
+  if impl(ghc >= 7.10) && flag(FastCompile)
+     ghc-Options: -fno-specialise -fmax-simplifier-iterations=0 -fsimplifier-phases=0
+  else
+     ghc-Options: -O2
+
+  if os(windows)
+   ghc-Options: -pgml g++ "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
+
+  if os(darwin)
+   ghc-Options: "-optl-Wl,-lfltkc"
+
+  if !os(darwin) && !os(windows)
+   ghc-Options: -pgml g++ "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"

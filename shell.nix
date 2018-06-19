@@ -1,5 +1,5 @@
-{ nixpkgs ? import <nixpkgs> {}
-, compiler ? "default"
+{ nixpkgs       ? import <nixpkgs> {}
+, compiler      ? null                # [e.g.] --attrstr compiler ghc842
 , withProfiling ? false
 , withHoogle    ? false 
 , development   ? true
@@ -9,6 +9,37 @@
 */
 
 ########################################
+
+let
+
+  nixpkgs-bootstrap = import <nixpkgs> { };
+
+  nixpkgs-pinned-metadata = builtins.fromJSON (builtins.readFile ./nixpkgs.json);
+
+  nixpkgs-pinned-source = nixpkgs-bootstrap.fetchFromGitHub {
+    owner = "NixOS";
+    repo  = "nixpkgs";
+    inherit (nixpkgs-pinned-metadata) rev sha256;
+  }; # $ nix-prefetch-git https://github.com/NixOS/nixpkgs.git > nixpkgs.json
+
+  overlays = [ (import ./overlay-nixpkgs.nix) ];
+
+  nixpkgs-pinned = import nixpkgs-pinned-source { inherit overlays; };
+
+  pkgs = nixpkgs-pinned;
+
+  haskellPackages =
+      if   compiler == null
+      then pkgs.haskellPackages
+      else pkgs.haskell.packages.${compiler};
+
+in
+
+{
+ reflex-fltk = haskellPackages.callPackage ./default.nix { };
+ # ^ nix-build --attr reflex-fltk release.nix
+}
+
   
 let
 
@@ -19,7 +50,7 @@ hs = pkgs.haskell.lib;
 ########################################
 
   haskellPackagesWithCompiler = 
-    if compiler == "default"
+    if compiler == null
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
@@ -111,14 +142,3 @@ $ nix-prefetch-git https://github.com/reflex-frp/reflex
 in
 
   env
-
-########################################
-
-/*
-
-[nix-shell]$ cabal repl fltkhs-reflex
-Preprocessing library for fltkhs-reflex-0.0.1..
-GHCi, version 8.2.2: http://www.haskell.org/ghc/  :? for help
-<command line>: can't load .so/.DLL for: /nix/store/p032q22qigxr838snfbsa07hhg50ipln-fltkhs-0.5.4.3/lib/ghc-8.2.2/x86_64-linux-ghc-8.2.2/libHSfltkhs-0.5.4.3-9l3SeZKpar9IlCC4jOt0Tr-ghc8.2.2.so (/nix/store/p032q22qigxr838snfbsa07hhg50ipln-fltkhs-0.5.4.3/lib/ghc-8.2.2/x86_64-linux-ghc-8.2.2/libHSfltkhs-0.5.4.3-9l3SeZKpar9IlCC4jOt0Tr-ghc8.2.2.so: undefined symbol: Fl_Adjuster_New)
-
-*/

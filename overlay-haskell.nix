@@ -23,9 +23,9 @@ fltkhs = utilities.callPackageFromGitViaJSON ./fltkhs.json
   inherit (pkgs) mesa;
  };
 
-# reflex = nixpkgs.haskell.lib.doJailbreak
-#  (utilities.callPackageFromGitViaJSON ./reflex.json { 
-#  });
+reflex = nixpkgs.haskell.lib.doJailbreak
+ (utilities.callPackageFromGitViaJSON ./reflex.json { });
+ # reflex-0.5
 
 }
 ########################################

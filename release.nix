@@ -3,30 +3,20 @@
 
 let
 
-  nixpkgs-bootstrap = import <nixpkgs> { };
+pkgs =
+ import ./nixpkgs.nix { };
 
-  nixpkgs-pinned-metadata = builtins.fromJSON (builtins.readFile ./nixpkgs.json);
+# hspkgs =
+#  import ./hspkgs.nix { inherit nixpkgs compiler; };
 
-  nixpkgs-pinned-source = nixpkgs-bootstrap.fetchFromGitHub {
-    owner = "NixOS";
-    repo  = "nixpkgs";
-    inherit (nixpkgs-pinned-metadata) rev sha256;
-  }; # $ nix-prefetch-git https://github.com/NixOS/nixpkgs.git > nixpkgs.json
-
-  overlays = [ (import ./overlay-nixpkgs.nix) ];
-
-  nixpkgs-pinned = import nixpkgs-pinned-source { inherit overlays; };
-
-  pkgs = nixpkgs-pinned;
-
-  haskellPackages =
-      if   compiler == null
-      then pkgs.haskellPackages
-      else pkgs.haskell.packages.${compiler};
+haskellPackages =
+  if   compiler == null
+  then pkgs.haskellPackages
+  else pkgs.haskell.packages.${compiler};
 
 in
 
 {
  reflex-fltk = haskellPackages.callPackage ./default.nix { };
- # ^ nix-build --attr reflex-fltk release.nix
+   # ^ nix-build --attr reflex-fltk release.nix
 }
