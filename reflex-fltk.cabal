@@ -14,17 +14,6 @@ category: UI,Graphics
 build-type: Simple
 -- Custom
 cabal-version: >=1.20
-               
-source-repository head
-  type: git
-  location: http://github.com/sboosali/reflex-fltk
-
-----------------------------------------
-
-Flag FastCompile
-   Description: Turn off optimizations for faster compilation
-   Manual: True
-   Default: True
 
 ----------------------------------------
 
@@ -38,6 +27,17 @@ extra-source-files:
 data-files:
   data/*.json
   scripts/*.sh
+
+----------------------------------------
+
+source-repository head
+  type: git
+  location: http://github.com/sboosali/reflex-fltk
+
+Flag FastCompile
+   Description: Turn off optimizations for faster compilation
+   Manual: True
+   Default: True
 
 ----------------------------------------
 
