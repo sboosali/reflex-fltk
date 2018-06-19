@@ -1,4 +1,4 @@
-{ nixpkgs       ? import <nixpkgs> {}
+{ nixpkgs       ? import ./nixpkgs.nix {}
 , compiler      ? null                # [e.g.] --attrstr compiler ghc842
 , withProfiling ? false
 , withHoogle    ? false 
@@ -9,43 +9,10 @@
 */
 
 ########################################
-
-let
-
-  nixpkgs-bootstrap = import <nixpkgs> { };
-
-  nixpkgs-pinned-metadata = builtins.fromJSON (builtins.readFile ./nixpkgs.json);
-
-  nixpkgs-pinned-source = nixpkgs-bootstrap.fetchFromGitHub {
-    owner = "NixOS";
-    repo  = "nixpkgs";
-    inherit (nixpkgs-pinned-metadata) rev sha256;
-  }; # $ nix-prefetch-git https://github.com/NixOS/nixpkgs.git > nixpkgs.json
-
-  overlays = [ (import ./overlay-nixpkgs.nix) ];
-
-  nixpkgs-pinned = import nixpkgs-pinned-source { inherit overlays; };
-
-  pkgs = nixpkgs-pinned;
-
-  haskellPackages =
-      if   compiler == null
-      then pkgs.haskellPackages
-      else pkgs.haskell.packages.${compiler};
-
-in
-
-{
- reflex-fltk = haskellPackages.callPackage ./default.nix { };
- # ^ nix-build --attr reflex-fltk release.nix
-}
-
-  
 let
 
 inherit (nixpkgs) pkgs;
-inherit (pkgs)    fetchFromGitHub;
-hs = pkgs.haskell.lib;
+ # pkgs = nixpkgs.pkgs;
 
 ########################################
 
@@ -75,33 +42,19 @@ hs = pkgs.haskell.lib;
 
 ########################################
 
-  modifiedHaskellPackages = haskellPackagesWithHoogle.override {
-    overrides = self: super: {
-
-      spiros = self.callCabal2nix "spiros" ../spiros {};
-
-      fltkhs = self.callPackage (super.fetchFromGitHub (import ./fltkhs.json)) {
-        inherit (self.pkgs) mesa;
-      };
-      
-      reflex = hs.doJailbreak (super.fetchFromGitHub (import ./reflex.json));
-      
-    };
-  };
-
-/*
-$ nix-prefetch-git https://github.com/reflex-frp/reflex
-*/
-
+modifiedHaskellPackages =
+ haskellPackagesWithHoogle.override {
+  overrides = (import ./overlay-haskell.nix pkgs nixpkgs);
+ };
 
 ########################################
   
-  installationDerivation = modifiedHaskellPackages.callPackage ./. {};
+  installationDerivation = modifiedHaskellPackages.callPackage ./default.nix {};
 
   # development environment
   # for `nix-shell --pure`
-  developmentDerivation = hs.linkWithGold 
-      (hs.addBuildDepends installationDerivation developmentPackages);
+  developmentDerivation = pkgs.haskell.lib.linkWithGold 
+      (pkgs.haskell.lib.addBuildDepends installationDerivation developmentPackages);
       # addBuildTools v addSetupDepends v addBuildDepends
 
   developmentPackages = developmentHaskellPackages
@@ -128,7 +81,7 @@ $ nix-prefetch-git https://github.com/reflex-frp/reflex
       # ghcid
       # ghc-mod
 
-      hasktags
+      # hasktags
   
     ];
 
@@ -136,7 +89,8 @@ $ nix-prefetch-git https://github.com/reflex-frp/reflex
    #    dante
    #  ];
 
-  env = hs.shellAware developmentDerivation;
+  env =
+   pkgs.haskell.lib.shellAware developmentDerivation;
         # if pkgs.lib.inNixShell then drv.env else drv;
 
 in
