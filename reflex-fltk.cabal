@@ -14,15 +14,32 @@ category: UI,Graphics
 build-type: Simple
 -- Custom
 cabal-version: >=1.20
+               
 source-repository head
   type: git
   location: http://github.com/sboosali/reflex-fltk
+
+----------------------------------------
 
 Flag FastCompile
    Description: Turn off optimizations for faster compilation
    Manual: True
    Default: True
 
+----------------------------------------
+
+extra-source-files:
+  README.md
+  .gitignore
+  .travis.yml
+  HLint.hs
+  stack.yaml
+
+data-files:
+  data/*.json
+  scripts/*.sh
+
+----------------------------------------
 
 Executable fltkhs-browser
   Main-Is: browser.hs
@@ -48,6 +65,7 @@ Executable fltkhs-browser
     ghc-Options: -pgml g++ "-optl-Wl,--allow-multiple-definition" "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
 
 
+----------------------------------------
 
 
 Executable fltkhs-reflex-host
@@ -77,3 +95,6 @@ Executable fltkhs-reflex-host
 
   if !os(darwin) && !os(windows)
    ghc-Options: -pgml g++ "-optl-Wl,--whole-archive" "-optl-Wl,-Bstatic" "-optl-Wl,-lfltkc" "-optl-Wl,-Bdynamic" "-optl-Wl,--no-whole-archive"
+
+
+----------------------------------------

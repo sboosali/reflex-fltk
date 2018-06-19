@@ -9,6 +9,9 @@ cbits/main
 result/
 result
 ghcid.txt
+# too large:
+data/AllSets-x.json
+data/AllSets-x.json.zip
 
 # Haskell
 dist/

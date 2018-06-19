@@ -1,0 +1,18 @@
+========================================
+
+$ xdpyinfo | grep dimensions
+dimensions: 3840x2160 px (pixels)
+
+$ xdpyinfo | grep resolution
+resolution: 96x96 dpi (dots-per-inch)
+
+========================================
+
+
+
+
+
+
+
+
+========================================
