@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE CPP #-}
 {-
 This is a test of how the browser draws lines.
 This is a second line.
@@ -37,7 +36,6 @@ That was a blank line above this.
 -}
 
 module Main where
-#include "initialize.h"
 import qualified Graphics.UI.FLTK.LowLevel.FL as FL
 import Graphics.UI.FLTK.LowLevel.FLTKHS
 import Control.Monad
