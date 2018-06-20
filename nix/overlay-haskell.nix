@@ -1,4 +1,5 @@
 pkgs: nixpkgs: 
+
 self: super: 
 
 # ^ `self`/`super` are like `nixpkgs.pkgs.haskellPackages`.
@@ -20,55 +21,7 @@ in
 
 spiros = self.callCabal2nix "spiros-LOCAL" ../spiros { };
 
-/*
-foldl :: (b -> a -> b) -> (b -> t a -> b)
-
-foldl :: (b -> (b -> b) -> b) -> (b -> [b -> b] -> b)
-
-let y = foldl (&) x [f,g,h]
-x,y   :: b
-f,g,h :: (b -> b)
-
-x == foldl (&) x []
-
-x == foldl (&) x [id,id,...]
-
-z == foldl (&) x [const y, const z,...]
-
-utilities.foldl = builtins.foldl' (x: f: f x)
-
-*/
-
-# use haskell.lib.add<...> on `cabal2nix`'d fltkhs from Hackage,
-# i.e. not manual `default.nix` from locally.
-
-fltkhs = builtins.foldl' (x: f: f x)
- (self.callHackage "fltkhs" "0.5.4.5" { })
- [
-   (d: haskell.addSetupDepends     d ((with self; [
-     base c2hs Cabal directory filepath
-   ]) ++ (with pkgs; [
-     autoconf 
-   ])))
-
-   # (d: haskell.addSetupTools       d (with pkgs; [  ]))
-   #(d: haskell.addPkgconfigDepends d (with pkgs; [  ]))
-
-   #(d: haskell.addBuildDepends     d (with self; [  ]))
-
-   (d: haskell.addBuildTools d
-    ( (with self; [ c2hs ]) ++
-      (with pkgs; [ autoconf fltk ])
-    )
-   )
-
-   (d: haskell.addExtraLibraries   d ((with pkgs; [
-     fltk libjpeg 
-   ]) ++ nixpkgs.lib.optionals false [ # flags.opengl
-     pkgs.mesa 
-   ]))
-
- ];
+fltkhs = import ./fltkhs.nix {opengl=false;} self pkgs;
 
 /*
 
