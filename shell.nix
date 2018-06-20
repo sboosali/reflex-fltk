@@ -1,7 +1,7 @@
-{ nixpkgs       ? import ./nixpkgs.nix {}
-, compiler      ? null                # [e.g.] --attrstr compiler ghc842
-, withProfiling ? false
-, withHoogle    ? false 
+{ nixpkgs       ? import ./nix/nixpkgs.nix {}
+, compiler      ? null                # [e.g.] --argstr compiler ghc843
+, withProfiling ? true # false
+, withHoogle    ? true # false 
 , development   ? true
 }:
 
@@ -16,50 +16,65 @@ inherit (nixpkgs) pkgs;
 
 ########################################
 
-  haskellPackagesWithCompiler = 
-    if compiler == null
+haskellPackagesWithCompiler = 
+    if   compiler == null
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
-  haskellPackagesWithProfiling = 
-    if withProfiling
-    then haskellPackagesWithCompiler.override {
-           overrides = self: super: {
-             mkDerivation = args: super.mkDerivation (args // { enableLibraryProfiling = true; });
+haskellPackagesWithProfiling = 
+    if   withProfiling
+    then haskellPackagesWithCompiler.override
+         {
+           overrides = self: super:
+           {
+             mkDerivation = args:
+               super.mkDerivation (args //
+                 {
+                   enableLibraryProfiling = true;
+                 });
            };
          }
     else haskellPackagesWithCompiler;
-                 
-  haskellPackagesWithHoogle =
-    if withHoogle
-    then haskellPackagesWithProfiling.override {
-           overrides = self: super: {
-             ghc = super.ghc // { withPackages = super.ghc.withHoogle; };
-             ghcWithPackages = self.ghc.withPackages;
-           };
+       
+haskellPackagesWithHoogle =
+    if   withHoogle
+    then haskellPackagesWithProfiling.override
+         {
+           overrides = self: super:
+             {
+               ghcWithPackages = self.ghc.withPackages;
+               ghc = super.ghc //
+                 {
+                   withPackages = super.ghc.withHoogle;
+                 };
+             };
          }
     else haskellPackagesWithProfiling;
 
 ########################################
 
 modifiedHaskellPackages =
- haskellPackagesWithHoogle.override {
-  overrides = (import ./overlay-haskell.nix pkgs nixpkgs);
- };
+ haskellPackagesWithHoogle.override
+   {
+     overrides = (import ./nix/overlay-haskell.nix pkgs nixpkgs);
+   };
 
 ########################################
   
-  installationDerivation = modifiedHaskellPackages.callPackage ./default.nix {};
+  installationDerivation =
+    modifiedHaskellPackages.callCabal2nix "reflex-fltk" ./. {};
 
   # development environment
   # for `nix-shell --pure`
-  developmentDerivation = pkgs.haskell.lib.linkWithGold 
+  developmentDerivation =
+    pkgs.haskell.lib.linkWithGold 
       (pkgs.haskell.lib.addBuildDepends installationDerivation developmentPackages);
       # addBuildTools v addSetupDepends v addBuildDepends
 
-  developmentPackages = developmentHaskellPackages
+  developmentPackages =
+       developmentHaskellPackages
+    ++ developmentSystemPackages;
                      # ++ developmentEmacsPackages 
-                     ++ developmentSystemPackages;
 
   developmentSystemPackages = with pkgs; [
   

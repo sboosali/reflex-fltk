@@ -4,7 +4,7 @@
 let
 
 pkgs =
- import ./nixpkgs.nix { };
+ import ./nix/nixpkgs.nix { };
 
 # hspkgs =
 #  import ./hspkgs.nix { inherit nixpkgs compiler; };
@@ -17,6 +17,10 @@ haskellPackages =
 in
 
 {
- reflex-fltk = haskellPackages.callPackage ./default.nix { };
-   # ^ nix-build --attr reflex-fltk release.nix
+
+ reflex-fltk = haskellPackages.callCabal2nix "reflex-fltk" ./. { };
+
+ # reflex-fltk = haskellPackages.callPackage ./default.nix { };
+ #   # ^ nix-build --attr reflex-fltk release.nix
+
 }
