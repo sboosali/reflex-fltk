@@ -27,8 +27,12 @@ fltkhs-hackage =
  self.callHackage "fltkhs" "0.5.4.5" { 
  };
 
-fltkhs-custom =
- foldlFunctions fltkhs-hackage
+fltkhs-local =
+ (self.callCabal2nix "fltkhs" ../../fltkhs) {
+ }; 
+
+fltkhs-customize = p:
+ foldlFunctions p
  [
 
    (d: haskell.addSetupDepends d
@@ -59,7 +63,7 @@ fltkhs-custom =
 
 in
 
-fltkhs-custom
+fltkhs-customize fltkhs-local
 
 ########################################
 
