@@ -28,8 +28,10 @@ fltkhs-hackage =
  };
 
 fltkhs-local =
- (self.callCabal2nix "fltkhs" ../../fltkhs) {
+ (self.callCabal2nix "fltkhs" ../../../fltkhs) {
  }; 
+ # ~/___/reflex-fltkhs/reflex-fltkhs/nix/
+ # ~/___/../../../fltkhs/
 
 fltkhs-customize = p:
  foldlFunctions p

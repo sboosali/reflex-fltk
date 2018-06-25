@@ -70,7 +70,7 @@ Executable fltkhs-browser
 
 Executable fltkhs-reflex-host
   Main-Is: reflex-host.hs
-  Hs-Source-Dirs: ignore/
+  Hs-Source-Dirs: sources/
   Build-Depends: base == 4.*,
                  fltkhs >= 0.5.3.4,
                  text >= 1.2.2.0,
