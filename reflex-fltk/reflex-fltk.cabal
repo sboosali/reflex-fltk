@@ -41,6 +41,41 @@ Flag FastCompile
 
 ----------------------------------------
 
+library
+  Hs-Source-Dirs: sources
+  Include-Dirs: c-sources
+
+  Exposed-Modules:
+    Reflex.FLTK
+    Reflex.FLTK.Types
+
+  Other-Modules:
+    Reflex.FLTK.Extra
+
+  Build-Depends:
+
+--    spiros >= 0.2,
+
+    bytestring,
+    text,
+    containers, 
+
+    mtl,
+
+    dependent-sum, 
+    ref-tf,
+
+    fltkhs >= 0.5.4,
+     
+    reflex-basic-host >= 0.1.0,
+
+    base == 4.*
+
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+----------------------------------------
+
 Executable fltkhs-browser
   Main-Is: browser.hs
   Hs-Source-Dirs: sources

@@ -30,6 +30,7 @@ cabal.config
 report.html
 .stack-work/
 cabal.project.local
+.ghc.environment.*
 
 # Emacs
 \#*
@@ -38,6 +39,9 @@ cabal.project.local
 \#*\#
 *.log
 TAGS
+
+# nano
+*.swp 
 
 # OS X
 .DS_Store

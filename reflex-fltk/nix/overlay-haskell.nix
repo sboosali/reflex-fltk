@@ -19,9 +19,34 @@ in
 ########################################
 {
 
-spiros = self.callCabal2nix "spiros-LOCAL" ../spiros { };
+spiros = self.callCabal2nix "spiros" ~/haskell/spiros { };
+# ../../../spiros/
+
+reflex = nixpkgs.haskell.lib.doJailbreak
+ (utilities.callPackageFromGitViaJSON ./reflex.json { });
+ # reflex-0.5
+
+# reflex-basic-host = (utilities.callPackageFromGitViaJSON ./reflex-basic-host.json { });
+
+reflex-basic-host = nixpkgs.haskell.lib.doJailbreak 
+ (self.callCabal2nix "reflex-basic-host" ../../../reflex-basic-host { 
+ });
+# ~/haskell/reflex-basic-host
+  # $ diff reflex-basic-host.nix <(cabal2nix .)
 
 fltkhs = import ./fltkhs.nix {opengl=false;} self pkgs;
+
+# fltkhs = self.callHackage "fltkhs" "0.5.4.5"
+#  {
+#  };
+
+# fltkhs = utilities.callPackageFromGitViaJSON ./fltkhs.json
+#  {
+#   inherit (pkgs) mesa;
+#  };
+
+}
+########################################
 
 /*
 
@@ -171,23 +196,6 @@ removeConfigureFlag
 
 
 */
-
-
-# fltkhs = self.callHackage "fltkhs" "0.5.4.5"
-#  {
-#  };
-
-# fltkhs = utilities.callPackageFromGitViaJSON ./fltkhs.json
-#  {
-#   inherit (pkgs) mesa;
-#  };
-
-reflex = nixpkgs.haskell.lib.doJailbreak
- (utilities.callPackageFromGitViaJSON ./reflex.json { });
- # reflex-0.5
-
-}
-########################################
 
 /*
 
