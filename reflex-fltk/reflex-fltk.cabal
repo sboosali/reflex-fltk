@@ -69,6 +69,8 @@ library
      
     reflex-basic-host >= 0.1.0,
 
+    reflex-host >= 0.3,
+
     base == 4.*
 
   default-language: Haskell2010

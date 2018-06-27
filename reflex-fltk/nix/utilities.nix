@@ -1,5 +1,18 @@
 self: super: rec {
 
+
+/* e.g.
+
+ > builtins.baseNameOf "https://github.com/bennofs/reflex-host"
+ "reflex-host"
+
+
+*/
+callHaskellPackageFromGitViaJSON = p:
+ self.callCabal2nix
+  (builtins.baseNameOf p) 
+  (super.pkgs.fetchgit (importPrefetched p));
+
 /* e.g.
 
 (shell command)

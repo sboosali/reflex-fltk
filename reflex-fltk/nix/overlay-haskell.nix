@@ -26,6 +26,12 @@ reflex = nixpkgs.haskell.lib.doJailbreak
  (utilities.callPackageFromGitViaJSON ./reflex.json { });
  # reflex-0.5
 
+# reflex-host = (utilities.callHaskellPackageFromGitViaJSON ./reflex-host.json { });
+
+reflex-host = # nixpkgs.haskell.lib.doJailbreak 
+ (self.callCabal2nix "reflex-host" ../../../reflex-host { 
+ });
+
 # reflex-basic-host = (utilities.callPackageFromGitViaJSON ./reflex-basic-host.json { });
 
 reflex-basic-host = nixpkgs.haskell.lib.doJailbreak 
@@ -44,6 +50,9 @@ fltkhs = import ./fltkhs.nix {opengl=false;} self pkgs;
 #  {
 #   inherit (pkgs) mesa;
 #  };
+
+stateWriter = nixpkgs.haskell.lib.dontCheck super.stateWriter;
+  # stateWriter-0.2.10
 
 }
 ########################################
