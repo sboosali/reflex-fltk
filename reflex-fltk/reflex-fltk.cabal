@@ -49,6 +49,10 @@ library
     Reflex.FLTK
     Reflex.FLTK.Types
 
+    Reflex.FLTK.Bindings.Button
+
+    Reflex.FLTK.Widgets.Button
+
   Other-Modules:
     Reflex.FLTK.Extra
 

@@ -58,7 +58,7 @@ fltkhs-customize = p:
        fltk libjpeg
      ]) ++ utilities.optionals opengl 
      (with pkgs; [
-       mesa
+       mesa  # freeglut
      ])))
 
  ];
